@@ -1,0 +1,39 @@
+{
+  "name": "gulp-revert-path",
+  "version": "0.0.0",
+  "description": "Revert the previous `file.path` change",
+  "license": "MIT",
+  "repository": "sindresorhus/gulp-revert-path",
+  "author": {
+    "name": "Sindre Sorhus",
+    "email": "sindresorhus@gmail.com",
+    "url": "sindresorhus.com"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "files": [
+    "index.js"
+  ],
+  "keywords": [
+    "gulpplugin",
+    "vinyl",
+    "revert",
+    "file",
+    "path",
+    "ext",
+    "extension",
+    "history",
+    "stream"
+  ],
+  "dependencies": {
+    "through2": "^0.6.5"
+  },
+  "devDependencies": {
+    "gulp-util": "^3.0.4",
+    "mocha": "*"
+  }
+}
