@@ -30,3 +30,30 @@ it('revert the path to the previous one', function (done) {
 
 	s.end();
 });
+
+it('successfully processes files with unmodified paths', function (done) {
+	var path = __dirname + '/fixture/fixture.foo';
+
+	var s = through.obj(function (file, enc, cb) {
+		assert.strictEqual(file.path, path);
+		assert.deepEqual(file.history, [path]);
+		cb(null, file);
+	});
+
+	s.pipe(revertPath()).pipe(through.obj(function (file, enc, cb) {
+		assert.strictEqual(file.path, path);
+		assert.deepEqual(file.history, [path]);
+		cb();
+	}));
+
+	s.on('end', done);
+
+	s.write(new gutil.File({
+		cwd: __dirname,
+		base: __dirname + '/fixture',
+		path: path,
+		contents: new Buffer('')
+	}));
+
+	s.end();
+});
