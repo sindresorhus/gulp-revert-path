@@ -1,6 +1,6 @@
 {
   "name": "gulp-revert-path",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Revert the previous `file.path` change",
   "license": "MIT",
   "repository": "sindresorhus/gulp-revert-path",
