@@ -28,6 +28,11 @@ gulp.task('default', function () {
 ```
 
 
+## Related
+
+- [vinyl-paths](https://github.com/sindresorhus/vinyl-paths) - Get the file paths in a vinyl stream
+
+
 ## License
 
 MIT © [Sindre Sorhus](http://sindresorhus.com)
