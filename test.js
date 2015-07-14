@@ -10,12 +10,14 @@ it('reverts the path to the previous one', function (done) {
 		assert.strictEqual(path.extname(file.path), '.foo');
 		file.path = gutil.replaceExtension(file.path, '.bar');
 		assert.strictEqual(path.extname(file.path), '.bar');
+		assert.strictEqual(file.history.length, 2);
 		cb(null, file);
 	});
 
 	s.pipe(revertPath()).pipe(through.obj(function (file, enc, cb) {
 		assert.strictEqual(path.extname(file.path), '.foo');
 		assert.strictEqual(path.extname(file.history[0]), '.foo');
+		assert.strictEqual(file.history.length, 1);
 		cb();
 	}));
 
@@ -38,12 +40,14 @@ it('reverts the path to the previous two', function (done) {
 		assert.strictEqual(path.extname(file.path), '.bar');
 		file.path = gutil.replaceExtension(file.path, '.baz');
 		assert.strictEqual(path.extname(file.path), '.baz');
+		assert.strictEqual(file.history.length, 3);
 		cb(null, file);
 	});
 
 	s.pipe(revertPath(2)).pipe(through.obj(function (file, enc, cb) {
 		assert.strictEqual(path.extname(file.path), '.foo');
 		assert.strictEqual(path.extname(file.history[0]), '.foo');
+		assert.strictEqual(file.history.length, 1);
 		cb();
 	}));
 
@@ -63,12 +67,14 @@ it('successfully processes files with unmodified paths', function (done) {
 	var s = through.obj(function (file, enc, cb) {
 		assert.strictEqual(path.extname(file.path), '.foo');
 		assert.deepEqual(path.extname(file.history[0]), '.foo');
+		assert.strictEqual(file.history.length, 1);
 		cb(null, file);
 	});
 
 	s.pipe(revertPath()).pipe(through.obj(function (file, enc, cb) {
 		assert.strictEqual(path.extname(file.path), '.foo');
 		assert.deepEqual(path.extname(file.history[0]), '.foo');
+		assert.strictEqual(file.history.length, 1);
 		cb();
 	}));
 
@@ -91,12 +97,14 @@ it('reverts as much as possible', function (done) {
 		assert.strictEqual(path.extname(file.path), '.bar');
 		file.path = gutil.replaceExtension(file.path, '.baz');
 		assert.strictEqual(path.extname(file.path), '.baz');
+		assert.strictEqual(file.history.length, 3);
 		cb(null, file);
 	});
 
 	s.pipe(revertPath(100)).pipe(through.obj(function (file, enc, cb) {
 		assert.strictEqual(path.extname(file.path), '.foo');
 		assert.deepEqual(path.extname(file.history[0]), '.foo');
+		assert.strictEqual(file.history.length, 1);
 		cb();
 	}));
 
