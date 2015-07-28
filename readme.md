@@ -18,11 +18,20 @@ $ npm install --save-dev gulp-revert-path
 var gulp = require('gulp');
 var babel = require('gulp-babel');
 var revertPath = require('gulp-revert-path');
+var rename = require('gulp-rename');
 
 gulp.task('default', function () {
 	return gulp.src('src/app.jsx')
 		.pipe(babel())       // file.path => src/app.js
 		.pipe(revertPath())  // file.path => src/app.jsx
+		.pipe(gulp.dest('dist'));
+});
+
+gulp.task('es2015', function () {
+	return gulp.src('src/app.txt')
+		.pipe(rename('src/app.jsx'))  // file.path => src/app.jsx
+		.pipe(babel())                // file.path => src/app.js
+		.pipe(revertPath(2))          // file.path => src/app.txt
 		.pipe(gulp.dest('dist'));
 });
 ```
