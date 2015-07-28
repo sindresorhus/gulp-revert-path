@@ -2,7 +2,7 @@
 
 > Revert the previous `file.path` change
 
-Many plugins change the `file.path` somehow. Most commenly the file extension. For example `gulp-babel` changes `.jsx` extensions to `.js` since it compiles JSX. Sometimes that's undesirable though. This plugin makes it easy to revert the path change.
+Many plugins change the `file.path` somehow. Most commonly the file extension. For example `gulp-babel` changes `.jsx` extensions to `.js` since it compiles JSX. Sometimes that's undesirable though. This plugin makes it easy to revert the path change.
 
 
 ## Install
@@ -35,6 +35,18 @@ gulp.task('es2015', function () {
 		.pipe(gulp.dest('dist'));
 });
 ```
+
+
+## API
+
+### revertPath(reversions)
+
+#### reversions
+
+Type: `number`  
+Default: `1`
+
+Number of times to revert the path.
 
 
 ## Related
