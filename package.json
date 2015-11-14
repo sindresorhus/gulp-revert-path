@@ -30,7 +30,7 @@
     "stream"
   ],
   "dependencies": {
-    "through2": "^0.6.5"
+    "through2": "^2.0.0"
   },
   "devDependencies": {
     "gulp-util": "^3.0.4",
