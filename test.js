@@ -119,3 +119,55 @@ it('reverts as much as possible', function (done) {
 
 	s.end();
 });
+
+it('reverts pathes for differently deep files', function (done) {
+	var s = through.obj(function (file, enc, cb) {
+		if (path.basename(file.path).startsWith('fixture')) {
+			assert.strictEqual(path.extname(file.path), '.foo');
+			file.path = gutil.replaceExtension(file.path, '.bar');
+			assert.strictEqual(path.extname(file.path), '.bar');
+			file.path = gutil.replaceExtension(file.path, '.baz');
+			assert.strictEqual(path.extname(file.path), '.baz');
+			file.path = gutil.replaceExtension(file.path, '.qux');
+			assert.strictEqual(path.extname(file.path), '.qux');
+		}
+		else {
+			assert.strictEqual(path.extname(file.path), '.corge');
+			file.path = gutil.replaceExtension(file.path, '.grault');
+			assert.strictEqual(path.extname(file.path), '.grault');
+			file.path = gutil.replaceExtension(file.path, '.garply');
+			assert.strictEqual(path.extname(file.path), '.garply');
+		}
+		assert.strictEqual(file.history.length, path.basename(file.path).startsWith('fixture') ? 4 : 3);
+		cb(null, file);
+	});
+
+	s.pipe(revertPath(1)).pipe(through.obj(function (file, enc, cb) {
+		console.log(file.path);
+		assert.strictEqual(path.extname(file.path), path.basename(file.path).startsWith('mixture') ? '.grault' : '.baz');
+		cb(null, file);
+	})).pipe(revertPath(1)).pipe(through.obj(function (file, enc, cb) {
+		assert.strictEqual(path.extname(file.path), path.basename(file.path).startsWith('mixture') ? '.corge' : '.bar');
+		cb(null, file);
+	})).pipe(revertPath(1)).pipe(through.obj(function (file, enc, cb) {
+		assert.strictEqual(path.extname(file.path), path.basename(file.path).startsWith('mixture') ? '.corge' : '.foo');
+		cb();
+	}));
+
+	s.on('end', done);
+
+	s.write(new gutil.File({
+		cwd: __dirname,
+		base: __dirname + '/fixture',
+		path: __dirname + '/fixture/mixture.corge',
+		contents: new Buffer('')
+	}));
+	s.write(new gutil.File({
+		cwd: __dirname,
+		base: __dirname + '/fixture',
+		path: __dirname + '/fixture/fixture.foo',
+		contents: new Buffer('')
+	}));
+
+	s.end();
+});
