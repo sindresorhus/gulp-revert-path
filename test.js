@@ -122,7 +122,7 @@ it('reverts as much as possible', function (done) {
 
 it('reverts pathes for differently deep files', function (done) {
 	var s = through.obj(function (file, enc, cb) {
-		if (path.basename(file.path).startsWith('fixture')) {
+		if (/^fixture/.test(path.basename(file.path))) {
 			assert.strictEqual(path.extname(file.path), '.foo');
 			file.path = gutil.replaceExtension(file.path, '.bar');
 			assert.strictEqual(path.extname(file.path), '.bar');
@@ -138,19 +138,18 @@ it('reverts pathes for differently deep files', function (done) {
 			file.path = gutil.replaceExtension(file.path, '.garply');
 			assert.strictEqual(path.extname(file.path), '.garply');
 		}
-		assert.strictEqual(file.history.length, path.basename(file.path).startsWith('fixture') ? 4 : 3);
+		assert.strictEqual(file.history.length, /^fixture/.test(path.basename(file.path)) ? 4 : 3);
 		cb(null, file);
 	});
 
 	s.pipe(revertPath(1)).pipe(through.obj(function (file, enc, cb) {
-		console.log(file.path);
-		assert.strictEqual(path.extname(file.path), path.basename(file.path).startsWith('mixture') ? '.grault' : '.baz');
+		assert.strictEqual(path.extname(file.path), /^mixture/.test(path.basename(file.path)) ? '.grault' : '.baz');
 		cb(null, file);
 	})).pipe(revertPath(1)).pipe(through.obj(function (file, enc, cb) {
-		assert.strictEqual(path.extname(file.path), path.basename(file.path).startsWith('mixture') ? '.corge' : '.bar');
+		assert.strictEqual(path.extname(file.path), /^mixture/.test(path.basename(file.path)) ? '.corge' : '.bar');
 		cb(null, file);
 	})).pipe(revertPath(1)).pipe(through.obj(function (file, enc, cb) {
-		assert.strictEqual(path.extname(file.path), path.basename(file.path).startsWith('mixture') ? '.corge' : '.foo');
+		assert.strictEqual(path.extname(file.path), /^mixture/.test(path.basename(file.path)) ? '.corge' : '.foo');
 		cb();
 	}));
 
