@@ -7,12 +7,12 @@ module.exports = function (reversions) {
 	return through.obj(function (file, enc, cb) {
 		var history = file.history;
 		var highestIndex = history.length - 1;
+		var localReversions = reversions;
 
-		if (reversions > highestIndex) {
-			reversions = highestIndex;
-		}
+		if (localReversions > highestIndex)
+			localReversions = highestIndex;
 
-		history.splice(-reversions, reversions);
+		history.splice(-localReversions, localReversions);
 		file.path = history[history.length - 1];
 
 		cb(null, file);
