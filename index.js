@@ -9,8 +9,9 @@ module.exports = function (reversions) {
 		var highestIndex = history.length - 1;
 		var localReversions = reversions;
 
-		if (localReversions > highestIndex)
+		if (localReversions > highestIndex) {
 			localReversions = highestIndex;
+		}
 
 		history.splice(-localReversions, localReversions);
 		file.path = history[history.length - 1];

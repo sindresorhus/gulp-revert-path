@@ -1,3 +1,4 @@
+/* eslint-env mocha */
 'use strict';
 var path = require('path');
 var assert = require('assert');
@@ -25,8 +26,8 @@ it('reverts the path to the previous one', function (done) {
 
 	s.write(new gutil.File({
 		cwd: __dirname,
-		base: __dirname + '/fixture',
-		path: __dirname + '/fixture/fixture.foo',
+		base: path.join(__dirname, 'fixture'),
+		path: path.join(__dirname, 'fixture/fixture.foo'),
 		contents: new Buffer('')
 	}));
 
@@ -55,8 +56,8 @@ it('reverts the path to the previous two', function (done) {
 
 	s.write(new gutil.File({
 		cwd: __dirname,
-		base: __dirname + '/fixture',
-		path: __dirname + '/fixture/fixture.foo',
+		base: path.join(__dirname, 'fixture'),
+		path: path.join(__dirname, 'fixture/fixture.foo'),
 		contents: new Buffer('')
 	}));
 
@@ -82,8 +83,8 @@ it('successfully processes files with unmodified paths', function (done) {
 
 	s.write(new gutil.File({
 		cwd: __dirname,
-		base: __dirname + '/fixture',
-		path: __dirname + '/fixture/fixture.foo',
+		base: path.join(__dirname, 'fixture'),
+		path: path.join(__dirname, 'fixture/fixture.foo'),
 		contents: new Buffer('')
 	}));
 
@@ -112,15 +113,15 @@ it('reverts as much as possible', function (done) {
 
 	s.write(new gutil.File({
 		cwd: __dirname,
-		base: __dirname + '/fixture',
-		path: __dirname + '/fixture/fixture.foo',
+		base: path.join(__dirname, 'fixture'),
+		path: path.join(__dirname, 'fixture/fixture.foo'),
 		contents: new Buffer('')
 	}));
 
 	s.end();
 });
 
-it('reverts pathes for differently deep files', function (done) {
+it('reverts paths for differently deep files', function (done) {
 	var s = through.obj(function (file, enc, cb) {
 		if (/^fixture/.test(path.basename(file.path))) {
 			assert.strictEqual(path.extname(file.path), '.foo');
@@ -130,15 +131,16 @@ it('reverts pathes for differently deep files', function (done) {
 			assert.strictEqual(path.extname(file.path), '.baz');
 			file.path = gutil.replaceExtension(file.path, '.qux');
 			assert.strictEqual(path.extname(file.path), '.qux');
-		}
-		else {
+		} else {
 			assert.strictEqual(path.extname(file.path), '.corge');
 			file.path = gutil.replaceExtension(file.path, '.grault');
 			assert.strictEqual(path.extname(file.path), '.grault');
 			file.path = gutil.replaceExtension(file.path, '.garply');
 			assert.strictEqual(path.extname(file.path), '.garply');
 		}
+
 		assert.strictEqual(file.history.length, /^fixture/.test(path.basename(file.path)) ? 4 : 3);
+
 		cb(null, file);
 	});
 
@@ -157,14 +159,15 @@ it('reverts pathes for differently deep files', function (done) {
 
 	s.write(new gutil.File({
 		cwd: __dirname,
-		base: __dirname + '/fixture',
-		path: __dirname + '/fixture/mixture.corge',
+		base: path.join(__dirname, 'fixture'),
+		path: path.join(__dirname, 'fixture/mixture.corge'),
 		contents: new Buffer('')
 	}));
+
 	s.write(new gutil.File({
 		cwd: __dirname,
-		base: __dirname + '/fixture',
-		path: __dirname + '/fixture/fixture.foo',
+		base: path.join(__dirname, 'fixture'),
+		path: path.join(__dirname, 'fixture/fixture.foo'),
 		contents: new Buffer('')
 	}));
 

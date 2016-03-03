@@ -15,35 +15,35 @@ $ npm install --save-dev gulp-revert-path
 ## Usage
 
 ```js
-var gulp = require('gulp');
-var babel = require('gulp-babel');
-var revertPath = require('gulp-revert-path');
-var rename = require('gulp-rename');
+const gulp = require('gulp');
+const babel = require('gulp-babel');
+const revertPath = require('gulp-revert-path');
+const rename = require('gulp-rename');
 
-gulp.task('default', function () {
-	return gulp.src('src/app.jsx')
+gulp.task('default', () =>
+	gulp.src('src/app.jsx')
 		.pipe(babel())       // file.path => src/app.js
 		.pipe(revertPath())  // file.path => src/app.jsx
-		.pipe(gulp.dest('dist'));
-});
+		.pipe(gulp.dest('dist'))
+);
 
-gulp.task('es2015', function () {
-	return gulp.src('src/app.txt')
+gulp.task('es2015', () =>
+	gulp.src('src/app.txt')
 		.pipe(rename('src/app.jsx'))  // file.path => src/app.jsx
 		.pipe(babel())                // file.path => src/app.js
 		.pipe(revertPath(2))          // file.path => src/app.txt
-		.pipe(gulp.dest('dist'));
-});
+		.pipe(gulp.dest('dist'))
+);
 ```
 
 
 ## API
 
-### revertPath(reversions)
+### revertPath([reversions])
 
 #### reversions
 
-Type: `number`  
+Type: `number`<br>
 Default: `1`
 
 Number of times to revert the path.
@@ -56,4 +56,4 @@ Number of times to revert the path.
 
 ## License
 
-MIT © [Sindre Sorhus](http://sindresorhus.com)
+MIT © [Sindre Sorhus](https://sindresorhus.com)
