@@ -1,40 +1,41 @@
 {
-  "name": "gulp-revert-path",
-  "version": "1.2.1",
-  "description": "Revert the previous `file.path` change",
-  "license": "MIT",
-  "repository": "sindresorhus/gulp-revert-path",
-  "author": {
-    "name": "Sindre Sorhus",
-    "email": "sindresorhus@gmail.com",
-    "url": "sindresorhus.com"
-  },
-  "engines": {
-    "node": ">=0.10.0"
-  },
-  "scripts": {
-    "test": "xo && mocha"
-  },
-  "files": [
-    "index.js"
-  ],
-  "keywords": [
-    "gulpplugin",
-    "vinyl",
-    "revert",
-    "file",
-    "path",
-    "ext",
-    "extension",
-    "history",
-    "stream"
-  ],
-  "dependencies": {
-    "through2": "^2.0.0"
-  },
-  "devDependencies": {
-    "gulp-util": "^3.0.4",
-    "mocha": "*",
-    "xo": "*"
-  }
+	"name": "gulp-revert-path",
+	"version": "1.2.1",
+	"description": "Revert the previous `file.path` change",
+	"license": "MIT",
+	"repository": "sindresorhus/gulp-revert-path",
+	"author": {
+		"name": "Sindre Sorhus",
+		"email": "sindresorhus@gmail.com",
+		"url": "sindresorhus.com"
+	},
+	"engines": {
+		"node": ">=4"
+	},
+	"scripts": {
+		"test": "xo && ava"
+	},
+	"files": [
+		"index.js"
+	],
+	"keywords": [
+		"gulpplugin",
+		"vinyl",
+		"revert",
+		"file",
+		"path",
+		"ext",
+		"extension",
+		"history",
+		"stream"
+	],
+	"dependencies": {
+		"through2": "^2.0.0"
+	},
+	"devDependencies": {
+		"ava": "*",
+		"replace-ext": "^1.0.0",
+		"vinyl": "^2.1.0",
+		"xo": "*"
+	}
 }

@@ -1,13 +1,13 @@
 'use strict';
-var through = require('through2');
+const through = require('through2');
 
-module.exports = function (reversions) {
+module.exports = reversions => {
 	reversions = typeof reversions === 'number' ? reversions : 1;
 
-	return through.obj(function (file, enc, cb) {
-		var history = file.history;
-		var highestIndex = history.length - 1;
-		var localReversions = reversions;
+	return through.obj((file, enc, cb) => {
+		const history = file.history;
+		const highestIndex = history.length - 1;
+		let localReversions = reversions;
 
 		if (localReversions > highestIndex) {
 			localReversions = highestIndex;

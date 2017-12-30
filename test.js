@@ -1,174 +1,165 @@
-/* eslint-env mocha */
-'use strict';
-var path = require('path');
-var assert = require('assert');
-var gutil = require('gulp-util');
-var through = require('through2');
-var revertPath = require('./');
+import path from 'path';
+import test from 'ava';
+import through from 'through2';
+import replaceExt from 'replace-ext';
+import Vinyl from 'vinyl';
+import m from '.';
 
-it('reverts the path to the previous one', function (done) {
-	var s = through.obj(function (file, enc, cb) {
-		assert.strictEqual(path.extname(file.path), '.foo');
-		file.path = gutil.replaceExtension(file.path, '.bar');
-		assert.strictEqual(path.extname(file.path), '.bar');
-		assert.strictEqual(file.history.length, 2);
+test.cb('reverts the path to the previous one', t => {
+	const s = through.obj((file, enc, cb) => {
+		t.is(path.extname(file.path), '.foo');
+		file.path = replaceExt(file.path, '.bar');
+		t.is(path.extname(file.path), '.bar');
+		t.is(file.history.length, 2);
 		cb(null, file);
 	});
 
-	s.pipe(revertPath()).pipe(through.obj(function (file, enc, cb) {
-		assert.strictEqual(path.extname(file.path), '.foo');
-		assert.strictEqual(path.extname(file.history[0]), '.foo');
-		assert.strictEqual(file.history.length, 1);
+	s.pipe(m()).pipe(through.obj((file, enc, cb) => {
+		t.is(path.extname(file.path), '.foo');
+		t.is(path.extname(file.history[0]), '.foo');
+		t.is(file.history.length, 1);
 		cb();
 	}));
 
-	s.on('end', done);
+	s.on('end', t.end);
 
-	s.write(new gutil.File({
+	s.end(new Vinyl({
 		cwd: __dirname,
 		base: path.join(__dirname, 'fixture'),
 		path: path.join(__dirname, 'fixture/fixture.foo'),
-		contents: new Buffer('')
+		contents: Buffer.from('')
 	}));
-
-	s.end();
 });
 
-it('reverts the path to the previous two', function (done) {
-	var s = through.obj(function (file, enc, cb) {
-		assert.strictEqual(path.extname(file.path), '.foo');
-		file.path = gutil.replaceExtension(file.path, '.bar');
-		assert.strictEqual(path.extname(file.path), '.bar');
-		file.path = gutil.replaceExtension(file.path, '.baz');
-		assert.strictEqual(path.extname(file.path), '.baz');
-		assert.strictEqual(file.history.length, 3);
+test.cb('reverts the path to the previous two', t => {
+	const s = through.obj((file, enc, cb) => {
+		t.is(path.extname(file.path), '.foo');
+		file.path = replaceExt(file.path, '.bar');
+		t.is(path.extname(file.path), '.bar');
+		file.path = replaceExt(file.path, '.baz');
+		t.is(path.extname(file.path), '.baz');
+		t.is(file.history.length, 3);
 		cb(null, file);
 	});
 
-	s.pipe(revertPath(2)).pipe(through.obj(function (file, enc, cb) {
-		assert.strictEqual(path.extname(file.path), '.foo');
-		assert.strictEqual(path.extname(file.history[0]), '.foo');
-		assert.strictEqual(file.history.length, 1);
+	s.pipe(m(2)).pipe(through.obj((file, enc, cb) => {
+		t.is(path.extname(file.path), '.foo');
+		t.is(path.extname(file.history[0]), '.foo');
+		t.is(file.history.length, 1);
 		cb();
 	}));
 
-	s.on('end', done);
+	s.on('end', t.end);
 
-	s.write(new gutil.File({
+	s.end(new Vinyl({
 		cwd: __dirname,
 		base: path.join(__dirname, 'fixture'),
 		path: path.join(__dirname, 'fixture/fixture.foo'),
-		contents: new Buffer('')
+		contents: Buffer.from('')
 	}));
-
-	s.end();
 });
 
-it('successfully processes files with unmodified paths', function (done) {
-	var s = through.obj(function (file, enc, cb) {
-		assert.strictEqual(path.extname(file.path), '.foo');
-		assert.deepEqual(path.extname(file.history[0]), '.foo');
-		assert.strictEqual(file.history.length, 1);
+test.cb('successfully processes files with unmodified paths', t => {
+	const s = through.obj((file, enc, cb) => {
+		t.is(path.extname(file.path), '.foo');
+		t.deepEqual(path.extname(file.history[0]), '.foo');
+		t.is(file.history.length, 1);
 		cb(null, file);
 	});
 
-	s.pipe(revertPath()).pipe(through.obj(function (file, enc, cb) {
-		assert.strictEqual(path.extname(file.path), '.foo');
-		assert.deepEqual(path.extname(file.history[0]), '.foo');
-		assert.strictEqual(file.history.length, 1);
+	s.pipe(m()).pipe(through.obj((file, enc, cb) => {
+		t.is(path.extname(file.path), '.foo');
+		t.deepEqual(path.extname(file.history[0]), '.foo');
+		t.is(file.history.length, 1);
 		cb();
 	}));
 
-	s.on('end', done);
+	s.on('end', t.end);
 
-	s.write(new gutil.File({
+	s.end(new Vinyl({
 		cwd: __dirname,
 		base: path.join(__dirname, 'fixture'),
 		path: path.join(__dirname, 'fixture/fixture.foo'),
-		contents: new Buffer('')
+		contents: Buffer.from('')
 	}));
-
-	s.end();
 });
 
-it('reverts as much as possible', function (done) {
-	var s = through.obj(function (file, enc, cb) {
-		assert.strictEqual(path.extname(file.path), '.foo');
-		file.path = gutil.replaceExtension(file.path, '.bar');
-		assert.strictEqual(path.extname(file.path), '.bar');
-		file.path = gutil.replaceExtension(file.path, '.baz');
-		assert.strictEqual(path.extname(file.path), '.baz');
-		assert.strictEqual(file.history.length, 3);
+test.cb('reverts as much as possible', t => {
+	const s = through.obj((file, enc, cb) => {
+		t.is(path.extname(file.path), '.foo');
+		file.path = replaceExt(file.path, '.bar');
+		t.is(path.extname(file.path), '.bar');
+		file.path = replaceExt(file.path, '.baz');
+		t.is(path.extname(file.path), '.baz');
+		t.is(file.history.length, 3);
 		cb(null, file);
 	});
 
-	s.pipe(revertPath(100)).pipe(through.obj(function (file, enc, cb) {
-		assert.strictEqual(path.extname(file.path), '.foo');
-		assert.deepEqual(path.extname(file.history[0]), '.foo');
-		assert.strictEqual(file.history.length, 1);
+	s.pipe(m(100)).pipe(through.obj((file, enc, cb) => {
+		t.is(path.extname(file.path), '.foo');
+		t.deepEqual(path.extname(file.history[0]), '.foo');
+		t.is(file.history.length, 1);
 		cb();
 	}));
 
-	s.on('end', done);
+	s.on('end', t.end);
 
-	s.write(new gutil.File({
+	s.end(new Vinyl({
 		cwd: __dirname,
 		base: path.join(__dirname, 'fixture'),
 		path: path.join(__dirname, 'fixture/fixture.foo'),
-		contents: new Buffer('')
+		contents: Buffer.from('')
 	}));
-
-	s.end();
 });
 
-it('reverts paths for differently deep files', function (done) {
-	var s = through.obj(function (file, enc, cb) {
-		if (/^fixture/.test(path.basename(file.path))) {
-			assert.strictEqual(path.extname(file.path), '.foo');
-			file.path = gutil.replaceExtension(file.path, '.bar');
-			assert.strictEqual(path.extname(file.path), '.bar');
-			file.path = gutil.replaceExtension(file.path, '.baz');
-			assert.strictEqual(path.extname(file.path), '.baz');
-			file.path = gutil.replaceExtension(file.path, '.qux');
-			assert.strictEqual(path.extname(file.path), '.qux');
+test.cb('reverts paths for differently deep files', t => {
+	const s = through.obj((file, enc, cb) => {
+		if (path.basename(file.path).startsWith('fixture')) {
+			t.is(path.extname(file.path), '.foo');
+			file.path = replaceExt(file.path, '.bar');
+			t.is(path.extname(file.path), '.bar');
+			file.path = replaceExt(file.path, '.baz');
+			t.is(path.extname(file.path), '.baz');
+			file.path = replaceExt(file.path, '.qux');
+			t.is(path.extname(file.path), '.qux');
 		} else {
-			assert.strictEqual(path.extname(file.path), '.corge');
-			file.path = gutil.replaceExtension(file.path, '.grault');
-			assert.strictEqual(path.extname(file.path), '.grault');
-			file.path = gutil.replaceExtension(file.path, '.garply');
-			assert.strictEqual(path.extname(file.path), '.garply');
+			t.is(path.extname(file.path), '.corge');
+			file.path = replaceExt(file.path, '.grault');
+			t.is(path.extname(file.path), '.grault');
+			file.path = replaceExt(file.path, '.garply');
+			t.is(path.extname(file.path), '.garply');
 		}
 
-		assert.strictEqual(file.history.length, /^fixture/.test(path.basename(file.path)) ? 4 : 3);
+		t.is(file.history.length, path.basename(file.path).startsWith('fixture') ? 4 : 3);
 
 		cb(null, file);
 	});
 
-	s.pipe(revertPath(1)).pipe(through.obj(function (file, enc, cb) {
-		assert.strictEqual(path.extname(file.path), /^mixture/.test(path.basename(file.path)) ? '.grault' : '.baz');
+	s.pipe(m(1)).pipe(through.obj((file, enc, cb) => {
+		t.is(path.extname(file.path), path.basename(file.path).startsWith('mixture') ? '.grault' : '.baz');
 		cb(null, file);
-	})).pipe(revertPath(1)).pipe(through.obj(function (file, enc, cb) {
-		assert.strictEqual(path.extname(file.path), /^mixture/.test(path.basename(file.path)) ? '.corge' : '.bar');
+	})).pipe(m(1)).pipe(through.obj((file, enc, cb) => {
+		t.is(path.extname(file.path), path.basename(file.path).startsWith('mixture') ? '.corge' : '.bar');
 		cb(null, file);
-	})).pipe(revertPath(1)).pipe(through.obj(function (file, enc, cb) {
-		assert.strictEqual(path.extname(file.path), /^mixture/.test(path.basename(file.path)) ? '.corge' : '.foo');
+	})).pipe(m(1)).pipe(through.obj((file, enc, cb) => {
+		t.is(path.extname(file.path), path.basename(file.path).startsWith('mixture') ? '.corge' : '.foo');
 		cb();
 	}));
 
-	s.on('end', done);
+	s.on('end', t.end);
 
-	s.write(new gutil.File({
+	s.write(new Vinyl({
 		cwd: __dirname,
 		base: path.join(__dirname, 'fixture'),
 		path: path.join(__dirname, 'fixture/mixture.corge'),
-		contents: new Buffer('')
+		contents: Buffer.from('')
 	}));
 
-	s.write(new gutil.File({
+	s.write(new Vinyl({
 		cwd: __dirname,
 		base: path.join(__dirname, 'fixture'),
 		path: path.join(__dirname, 'fixture/fixture.foo'),
-		contents: new Buffer('')
+		contents: Buffer.from('')
 	}));
 
 	s.end();
