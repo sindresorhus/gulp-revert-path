@@ -1,166 +1,175 @@
-import path from 'path';
+import {Buffer} from 'node:buffer';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 import test from 'ava';
-import through from 'through2';
-import replaceExt from 'replace-ext';
 import Vinyl from 'vinyl';
-import m from '.';
+import {pEvent} from 'p-event';
+import transformStream from 'easy-transform-stream';
+import revertPath from './index.js';
 
-test.cb('reverts the path to the previous one', t => {
-	const s = through.obj((file, enc, cb) => {
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+test('reverts the path to the previous one', async t => {
+	const s = transformStream({objectMode: true}, file => {
 		t.is(path.extname(file.path), '.foo');
-		file.path = replaceExt(file.path, '.bar');
+		file.extname = '.bar';
 		t.is(path.extname(file.path), '.bar');
 		t.is(file.history.length, 2);
-		cb(null, file);
+		return file;
 	});
 
-	s.pipe(m()).pipe(through.obj((file, enc, cb) => {
+	const promise = pEvent(s, 'end');
+
+	s.pipe(revertPath()).pipe(transformStream({objectMode: true}, file => {
 		t.is(path.extname(file.path), '.foo');
 		t.is(path.extname(file.history[0]), '.foo');
 		t.is(file.history.length, 1);
-		cb();
 	}));
-
-	s.on('end', t.end);
 
 	s.end(new Vinyl({
 		cwd: __dirname,
 		base: path.join(__dirname, 'fixture'),
 		path: path.join(__dirname, 'fixture/fixture.foo'),
-		contents: Buffer.from('')
+		contents: Buffer.from(''),
 	}));
+
+	await promise;
 });
 
-test.cb('reverts the path to the previous two', t => {
-	const s = through.obj((file, enc, cb) => {
+test('reverts the path to the previous two', async t => {
+	const s = transformStream({objectMode: true}, file => {
 		t.is(path.extname(file.path), '.foo');
-		file.path = replaceExt(file.path, '.bar');
+		file.extname = '.bar';
 		t.is(path.extname(file.path), '.bar');
-		file.path = replaceExt(file.path, '.baz');
+		file.extname = '.baz';
 		t.is(path.extname(file.path), '.baz');
 		t.is(file.history.length, 3);
-		cb(null, file);
+		return file;
 	});
 
-	s.pipe(m(2)).pipe(through.obj((file, enc, cb) => {
+	const promise = pEvent(s, 'end');
+
+	s.pipe(revertPath(2)).pipe(transformStream({objectMode: true}, file => {
 		t.is(path.extname(file.path), '.foo');
 		t.is(path.extname(file.history[0]), '.foo');
 		t.is(file.history.length, 1);
-		cb();
 	}));
-
-	s.on('end', t.end);
 
 	s.end(new Vinyl({
 		cwd: __dirname,
 		base: path.join(__dirname, 'fixture'),
 		path: path.join(__dirname, 'fixture/fixture.foo'),
-		contents: Buffer.from('')
+		contents: Buffer.from(''),
 	}));
+
+	await promise;
 });
 
-test.cb('successfully processes files with unmodified paths', t => {
-	const s = through.obj((file, enc, cb) => {
+test('successfully processes files with unmodified paths', async t => {
+	const s = transformStream({objectMode: true}, file => {
 		t.is(path.extname(file.path), '.foo');
-		t.deepEqual(path.extname(file.history[0]), '.foo');
+		t.is(path.extname(file.history[0]), '.foo');
 		t.is(file.history.length, 1);
-		cb(null, file);
+		return file;
 	});
 
-	s.pipe(m()).pipe(through.obj((file, enc, cb) => {
-		t.is(path.extname(file.path), '.foo');
-		t.deepEqual(path.extname(file.history[0]), '.foo');
-		t.is(file.history.length, 1);
-		cb();
-	}));
+	const promise = pEvent(s, 'end');
 
-	s.on('end', t.end);
+	s.pipe(revertPath()).pipe(transformStream({objectMode: true}, file => {
+		t.is(path.extname(file.path), '.foo');
+		t.is(path.extname(file.history[0]), '.foo');
+		t.is(file.history.length, 1);
+	}));
 
 	s.end(new Vinyl({
 		cwd: __dirname,
 		base: path.join(__dirname, 'fixture'),
 		path: path.join(__dirname, 'fixture/fixture.foo'),
-		contents: Buffer.from('')
+		contents: Buffer.from(''),
 	}));
+
+	await promise;
 });
 
-test.cb('reverts as much as possible', t => {
-	const s = through.obj((file, enc, cb) => {
+test('reverts as much as possible', async t => {
+	const s = transformStream({objectMode: true}, file => {
 		t.is(path.extname(file.path), '.foo');
-		file.path = replaceExt(file.path, '.bar');
+		file.extname = '.bar';
 		t.is(path.extname(file.path), '.bar');
-		file.path = replaceExt(file.path, '.baz');
+		file.extname = '.baz';
 		t.is(path.extname(file.path), '.baz');
 		t.is(file.history.length, 3);
-		cb(null, file);
+		return file;
 	});
 
-	s.pipe(m(100)).pipe(through.obj((file, enc, cb) => {
-		t.is(path.extname(file.path), '.foo');
-		t.deepEqual(path.extname(file.history[0]), '.foo');
-		t.is(file.history.length, 1);
-		cb();
-	}));
+	const promise = pEvent(s, 'end');
 
-	s.on('end', t.end);
+	s.pipe(revertPath(100)).pipe(transformStream({objectMode: true}, file => {
+		t.is(path.extname(file.path), '.foo');
+		t.is(path.extname(file.history[0]), '.foo');
+		t.is(file.history.length, 1);
+	}));
 
 	s.end(new Vinyl({
 		cwd: __dirname,
 		base: path.join(__dirname, 'fixture'),
 		path: path.join(__dirname, 'fixture/fixture.foo'),
-		contents: Buffer.from('')
+		contents: Buffer.from(''),
 	}));
+
+	await promise;
 });
 
-test.cb('reverts paths for differently deep files', t => {
-	const s = through.obj((file, enc, cb) => {
+test('reverts paths for differently deep files', async t => {
+	const s = transformStream({objectMode: true}, file => {
 		if (path.basename(file.path).startsWith('fixture')) {
 			t.is(path.extname(file.path), '.foo');
-			file.path = replaceExt(file.path, '.bar');
+			file.extname = '.bar';
 			t.is(path.extname(file.path), '.bar');
-			file.path = replaceExt(file.path, '.baz');
+			file.extname = '.baz';
 			t.is(path.extname(file.path), '.baz');
-			file.path = replaceExt(file.path, '.qux');
+			file.extname = '.qux';
 			t.is(path.extname(file.path), '.qux');
 		} else {
 			t.is(path.extname(file.path), '.corge');
-			file.path = replaceExt(file.path, '.grault');
+			file.extname = '.grault';
 			t.is(path.extname(file.path), '.grault');
-			file.path = replaceExt(file.path, '.garply');
+			file.extname = '.garply';
 			t.is(path.extname(file.path), '.garply');
 		}
 
 		t.is(file.history.length, path.basename(file.path).startsWith('fixture') ? 4 : 3);
 
-		cb(null, file);
+		return file;
 	});
 
-	s.pipe(m(1)).pipe(through.obj((file, enc, cb) => {
-		t.is(path.extname(file.path), path.basename(file.path).startsWith('mixture') ? '.grault' : '.baz');
-		cb(null, file);
-	})).pipe(m(1)).pipe(through.obj((file, enc, cb) => {
-		t.is(path.extname(file.path), path.basename(file.path).startsWith('mixture') ? '.corge' : '.bar');
-		cb(null, file);
-	})).pipe(m(1)).pipe(through.obj((file, enc, cb) => {
-		t.is(path.extname(file.path), path.basename(file.path).startsWith('mixture') ? '.corge' : '.foo');
-		cb();
-	}));
+	const promise = pEvent(s, 'end');
 
-	s.on('end', t.end);
+	s.pipe(revertPath(1)).pipe(transformStream({objectMode: true}, file => {
+		t.is(path.extname(file.path), path.basename(file.path).startsWith('mixture') ? '.grault' : '.baz');
+		return file;
+	})).pipe(revertPath(1)).pipe(transformStream({objectMode: true}, file => {
+		t.is(path.extname(file.path), path.basename(file.path).startsWith('mixture') ? '.corge' : '.bar');
+		return file;
+	})).pipe(revertPath(1)).pipe(transformStream({objectMode: true}, file => {
+		t.is(path.extname(file.path), path.basename(file.path).startsWith('mixture') ? '.corge' : '.foo');
+	}));
 
 	s.write(new Vinyl({
 		cwd: __dirname,
 		base: path.join(__dirname, 'fixture'),
 		path: path.join(__dirname, 'fixture/mixture.corge'),
-		contents: Buffer.from('')
+		contents: Buffer.from(''),
 	}));
 
 	s.write(new Vinyl({
 		cwd: __dirname,
 		base: path.join(__dirname, 'fixture'),
 		path: path.join(__dirname, 'fixture/fixture.foo'),
-		contents: Buffer.from('')
+		contents: Buffer.from(''),
 	}));
 
 	s.end();
+
+	await promise;
 });

@@ -4,13 +4,16 @@
 	"description": "Revert the previous `file.path` change",
 	"license": "MIT",
 	"repository": "sindresorhus/gulp-revert-path",
+	"funding": "https://github.com/sponsors/sindresorhus",
 	"author": {
 		"name": "Sindre Sorhus",
 		"email": "sindresorhus@gmail.com",
-		"url": "sindresorhus.com"
+		"url": "https://sindresorhus.com"
 	},
+	"type": "module",
+	"exports": "./index.js",
 	"engines": {
-		"node": ">=4"
+		"node": ">=18"
 	},
 	"scripts": {
 		"test": "xo && ava"
@@ -30,12 +33,20 @@
 		"stream"
 	],
 	"dependencies": {
-		"through2": "^2.0.0"
+		"gulp-plugin-extras": "^0.3.0"
 	},
 	"devDependencies": {
-		"ava": "*",
-		"replace-ext": "^1.0.0",
-		"vinyl": "^2.1.0",
-		"xo": "*"
+		"ava": "^5.3.1",
+		"easy-transform-stream": "^1.0.1",
+		"vinyl": "^3.0.0",
+		"xo": "^0.56.0"
+	},
+	"peerDependencies": {
+		"gulp": ">=4"
+	},
+	"peerDependenciesMeta": {
+		"gulp": {
+			"optional": true
+		}
 	}
 }

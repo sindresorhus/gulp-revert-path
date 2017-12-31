@@ -1,21 +1,20 @@
-'use strict';
-const through = require('through2');
+import {gulpPlugin} from 'gulp-plugin-extras';
 
-module.exports = reversions => {
-	reversions = typeof reversions === 'number' ? reversions : 1;
-
-	return through.obj((file, enc, cb) => {
-		const history = file.history;
+export default function gulpRevertPath(reversionCount = 1) {
+	return gulpPlugin('gulp-revert-path', file => {
+		const {history} = file;
 		const highestIndex = history.length - 1;
-		let localReversions = reversions;
+		let localReversions = reversionCount;
 
 		if (localReversions > highestIndex) {
 			localReversions = highestIndex;
 		}
 
 		history.splice(-localReversions, localReversions);
-		file.path = history[history.length - 1];
+		file.path = history.at(-1);
 
-		cb(null, file);
+		return file;
+	}, {
+		supportsAnyType: true,
 	});
-};
+}
