@@ -34,7 +34,6 @@
 	},
 	"devDependencies": {
 		"ava": "*",
-		"replace-ext": "^1.0.0",
 		"vinyl": "^2.1.0",
 		"xo": "*"
 	}

@@ -1,14 +1,13 @@
 import path from 'path';
 import test from 'ava';
 import through from 'through2';
-import replaceExt from 'replace-ext';
 import Vinyl from 'vinyl';
 import m from '.';
 
 test.cb('reverts the path to the previous one', t => {
 	const s = through.obj((file, enc, cb) => {
 		t.is(path.extname(file.path), '.foo');
-		file.path = replaceExt(file.path, '.bar');
+		file.extname = '.bar';
 		t.is(path.extname(file.path), '.bar');
 		t.is(file.history.length, 2);
 		cb(null, file);
@@ -34,9 +33,9 @@ test.cb('reverts the path to the previous one', t => {
 test.cb('reverts the path to the previous two', t => {
 	const s = through.obj((file, enc, cb) => {
 		t.is(path.extname(file.path), '.foo');
-		file.path = replaceExt(file.path, '.bar');
+		file.extname = '.bar';
 		t.is(path.extname(file.path), '.bar');
-		file.path = replaceExt(file.path, '.baz');
+		file.extname = '.baz';
 		t.is(path.extname(file.path), '.baz');
 		t.is(file.history.length, 3);
 		cb(null, file);
@@ -87,9 +86,9 @@ test.cb('successfully processes files with unmodified paths', t => {
 test.cb('reverts as much as possible', t => {
 	const s = through.obj((file, enc, cb) => {
 		t.is(path.extname(file.path), '.foo');
-		file.path = replaceExt(file.path, '.bar');
+		file.extname = '.bar';
 		t.is(path.extname(file.path), '.bar');
-		file.path = replaceExt(file.path, '.baz');
+		file.extname = '.baz';
 		t.is(path.extname(file.path), '.baz');
 		t.is(file.history.length, 3);
 		cb(null, file);
@@ -116,17 +115,17 @@ test.cb('reverts paths for differently deep files', t => {
 	const s = through.obj((file, enc, cb) => {
 		if (path.basename(file.path).startsWith('fixture')) {
 			t.is(path.extname(file.path), '.foo');
-			file.path = replaceExt(file.path, '.bar');
+			file.extname = '.bar';
 			t.is(path.extname(file.path), '.bar');
-			file.path = replaceExt(file.path, '.baz');
+			file.extname = '.baz';
 			t.is(path.extname(file.path), '.baz');
-			file.path = replaceExt(file.path, '.qux');
+			file.extname = '.qux';
 			t.is(path.extname(file.path), '.qux');
 		} else {
 			t.is(path.extname(file.path), '.corge');
-			file.path = replaceExt(file.path, '.grault');
+			file.extname = '.grault';
 			t.is(path.extname(file.path), '.grault');
-			file.path = replaceExt(file.path, '.garply');
+			file.extname = '.garply';
 			t.is(path.extname(file.path), '.garply');
 		}
 
