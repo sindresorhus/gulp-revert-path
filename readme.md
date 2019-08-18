@@ -20,14 +20,14 @@ const babel = require('gulp-babel');
 const revertPath = require('gulp-revert-path');
 const rename = require('gulp-rename');
 
-gulp.task('default', () =>
+exports.default = () => (
 	gulp.src('src/app.jsx')
 		.pipe(babel())       // file.path => src/app.js
 		.pipe(revertPath())  // file.path => src/app.jsx
 		.pipe(gulp.dest('dist'))
 );
 
-gulp.task('es2015', () =>
+exports.es2015 = () => (
 	gulp.src('src/app.txt')
 		.pipe(rename('src/app.jsx'))  // file.path => src/app.jsx
 		.pipe(babel())                // file.path => src/app.js
@@ -39,7 +39,7 @@ gulp.task('es2015', () =>
 
 ## API
 
-### revertPath([reversions])
+### revertPath(reversions?)
 
 #### reversions
 
@@ -52,8 +52,3 @@ Number of times to revert the path.
 ## Related
 
 - [vinyl-paths](https://github.com/sindresorhus/vinyl-paths) - Get the file paths in a vinyl stream
-
-
-## License
-
-MIT © [Sindre Sorhus](https://sindresorhus.com)
