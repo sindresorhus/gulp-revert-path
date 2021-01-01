@@ -1,4 +1,4 @@
-# gulp-revert-path [![Build Status](https://travis-ci.org/sindresorhus/gulp-revert-path.svg?branch=master)](https://travis-ci.org/sindresorhus/gulp-revert-path)
+# gulp-revert-path
 
 > Revert the previous `file.path` change
 
